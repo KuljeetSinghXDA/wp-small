@@ -30,20 +30,19 @@ services:
 
   # Service 2: WordPress Application Server (PHP-FPM)
   wordpress:
-    image: wordpress:php8.4-fpm-alpine
-    container_name: wordpress_app
-    restart: unless-stopped
-    environment:
-      WORDPRESS_DB_HOST: mariadb:3306
-      WORDPRESS_DB_USER: ${DB_USER}
-      WORDPRESS_DB_PASSWORD: ${DB_PASSWORD}
-      WORDPRESS_DB_NAME: ${DB_NAME}
-      WORDPRESS_TABLE_PREFIX: wp_
-      # Disable WordPress auto-updates to maintain a declarative state
-      WP_AUTO_UPDATE_CORE: "false"
-      AUTOMATIC_UPDATER_DISABLED: "true"
-      # Externalize cron to reduce per-request work
-      DISABLE_WP_CRON: "1"
+  image: wordpress:php8.4-fpm-alpine
+  container_name: wordpress_app
+  restart: unless-stopped
+  environment:
+    WORDPRESS_DB_HOST: mariadb:3306
+    WORDPRESS_DB_USER: ${DB_USER}
+    WORDPRESS_DB_PASSWORD: ${DB_PASSWORD}
+    WORDPRESS_DB_NAME: ${DB_NAME}
+    WORDPRESS_TABLE_PREFIX: wp_
+    WP_AUTO_UPDATE_CORE: "false"
+    AUTOMATIC_UPDATER_DISABLED: "true"
+    WORDPRESS_CONFIG_EXTRA: |
+      define('DISABLE_WP_CRON', true);
     volumes:
       - wordpress_data:/var/www/html
       - ./uploads.ini:/usr/local/etc/php/conf.d/uploads.ini:ro
