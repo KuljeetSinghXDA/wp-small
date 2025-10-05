@@ -1,7 +1,7 @@
+
 version: '3.8'
 
 services:
-
   # Service 1: Nginx Web Server (Public-Facing Entrypoint)
   nginx:
     image: nginx:1.28.0-alpine
@@ -10,6 +10,7 @@ services:
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
       - wordpress_data:/var/www/html:ro
+      - cache:/var/cache/nginx
     depends_on:
       - wordpress
     networks:
@@ -41,13 +42,10 @@ services:
       # Disable WordPress auto-updates to maintain a declarative state
       WP_AUTO_UPDATE_CORE: false
       AUTOMATIC_UPDATER_DISABLED: true
-      WORDPRESS_CONFIG_EXTRA: |
-        define('WP_CACHE', true);
     volumes:
       - wordpress_data:/var/www/html
       - ./uploads.ini:/usr/local/etc/php/conf.d/uploads.ini:ro
       - ./opcache.ini:/usr/local/etc/php/conf.d/opcache.ini:ro
-      - ./zz-dokploy.conf:/usr/local/etc/php-fpm.d/zz-dokploy.conf:ro
     networks:
       - dokploy-network
     depends_on:
@@ -78,3 +76,10 @@ networks:
 volumes:
   wordpress_data:
   mariadb_data:
+  cache:
+
+
+
+
+
+
