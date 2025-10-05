@@ -5,13 +5,14 @@ performance_schema = OFF
 innodb_stats_on_metadata = OFF
 
 # Memory Tuning for Low-Resource Environments
-innodb_buffer_pool_size = 64M
+innodb_buffer_pool_size = 128M
 key_buffer_size = 8M
-max_connections = 20
+max_connections = 15
 query_cache_type = 0
 query_cache_size = 0
 tmp_table_size = 8M
 max_heap_table_size = 8M
+table_open_cache = 64
 
 # InnoDB Specific Tuning
 innodb_log_buffer_size = 4M
