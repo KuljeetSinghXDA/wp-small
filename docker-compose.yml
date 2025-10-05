@@ -43,8 +43,6 @@ services:
       WORDPRESS_TABLE_PREFIX: wp_
       WP_AUTO_UPDATE_CORE: "false"
       AUTOMATIC_UPDATER_DISABLED: "true"
-      WORDPRESS_CONFIG_EXTRA: |
-        define('DISABLE_WP_CRON', true);
     volumes:
       - wordpress_data:/var/www/html
       - ./uploads.ini:/usr/local/etc/php/conf.d/uploads.ini:ro
@@ -79,3 +77,4 @@ volumes:
   wordpress_data:
   mariadb_data:
   cache:
+
