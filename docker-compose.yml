@@ -1,7 +1,6 @@
 version: '3.8'
 
 services:
-
   nginx:
     image: nginx:1.28.0-alpine
     container_name: wordpress_nginx
@@ -25,52 +24,59 @@ services:
       - "traefik.http.routers.wordpress-https.tls=true"
       - "traefik.http.routers.wordpress-https.tls.certresolver=letsencrypt"
       - "traefik.http.services.wordpress.loadbalancer.server.port=80"
-      - "traefik.docker.network=dokploy-network"
 
   wordpress:
-    image: wordpress:php8.4-fpm-alpine
-    container_name: wordpress_app
+    # keep your existing image/env/db settings
+    image: ${WP_IMAGE:-wordpress:php8.4-fpm-alpine}
     restart: unless-stopped
     environment:
-      WORDPRESS_DB_HOST: mariadb:3306
-      WORDPRESS_DB_USER: ${DB_USER}
-      WORDPRESS_DB_PASSWORD: ${DB_PASSWORD}
-      WORDPRESS_DB_NAME: ${DB_NAME}
-      WORDPRESS_TABLE_PREFIX: wp_
-      WP_AUTO_UPDATE_CORE: false
-      AUTOMATIC_UPDATER_DISABLED: true
-      DISABLE_WP_CRON: "true"
+      - DISABLE_WP_CRON=true
+      - WORDPRESS_DB_HOST=${WORDPRESS_DB_HOST:-db:3306}
+      - WORDPRESS_DB_USER=${MYSQL_USER}
+      - WORDPRESS_DB_PASSWORD=${MYSQL_PASSWORD}
+      - WORDPRESS_DB_NAME=${MYSQL_DATABASE}
     volumes:
       - wordpress_data:/var/www/html
+      - ./www-ondemand.conf:/usr/local/etc/php-fpm.d/www.conf:ro
       - ./uploads.ini:/usr/local/etc/php/conf.d/uploads.ini:ro
-      - ./php-fpm/www-ondemand.conf:/usr/local/etc/php-fpm.d/zz-ondemand.conf:ro
       - ./opcache.ini:/usr/local/etc/php/conf.d/opcache.ini:ro
+    depends_on:
+      - db
     networks:
       - dokploy-network
-    depends_on:
-      - mariadb
 
-  mariadb:
+  db:
     image: mariadb:11.8.3
-    container_name: wordpress_db
     restart: unless-stopped
     environment:
-      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
-      MARIADB_DATABASE: ${DB_NAME}
-      MARIADB_USER: ${DB_USER}
-      MARIADB_PASSWORD: ${DB_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+    command: --skip-log-bin
     volumes:
-      - mariadb_data:/var/lib/mysql
+      - db_data:/var/lib/mysql
       - ./low-memory.cnf:/etc/mysql/conf.d/low-memory.cnf:ro
-    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     networks:
       - dokploy-network
+
+  wp-cron:
+    image: alpine:3.20
+    restart: unless-stopped
+    command: >
+      sh -c "apk add --no-cache curl &&
+      echo '*/15 * * * * curl -fsS http://nginx/wp-cron.php?doing_wp_cron=1 > /dev/null 2>&1' | crontab - &&
+      crond -f -L /dev/stdout"
+    depends_on:
+      - nginx
+    networks:
+      - dokploy-network
+
+volumes:
+  wordpress_data:
+  db_data:
+  nginx_cache:
 
 networks:
   dokploy-network:
     external: true
-
-volumes:
-  wordpress_data:
-  mariadb_data:
-  nginx_cache:
