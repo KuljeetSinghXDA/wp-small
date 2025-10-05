@@ -45,7 +45,6 @@ services:
     volumes:
       - wordpress_data:/var/www/html
       - ./uploads.ini:/usr/local/etc/php/conf.d/uploads.ini:ro
-      - ./opcache.ini:/usr/local/etc/php/conf.d/opcache.ini:ro
     networks:
       - dokploy-network
     depends_on:
