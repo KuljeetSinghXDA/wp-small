@@ -1,7 +1,7 @@
+
 version: '3.8'
 
 services:
-
   # Service 1: Nginx Web Server (Public-Facing Entrypoint)
   nginx:
     image: nginx:1.28.0-alpine
@@ -40,10 +40,8 @@ services:
       WORDPRESS_DB_NAME: ${DB_NAME}
       WORDPRESS_TABLE_PREFIX: wp_
       # Disable WordPress auto-updates to maintain a declarative state
-      WP_AUTO_UPDATE_CORE: "false"
-      AUTOMATIC_UPDATER_DISABLED: "true"
-      # Externalize cron to reduce per-request work
-      DISABLE_WP_CRON: "1"
+      WP_AUTO_UPDATE_CORE: false
+      AUTOMATIC_UPDATER_DISABLED: true
     volumes:
       - wordpress_data:/var/www/html
       - ./uploads.ini:/usr/local/etc/php/conf.d/uploads.ini:ro
@@ -80,3 +78,9 @@ volumes:
   wordpress_data:
   mariadb_data:
   cache:
+
+
+
+
+
+
