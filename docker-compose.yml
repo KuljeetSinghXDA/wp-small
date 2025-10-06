@@ -31,7 +31,7 @@ services:
     image: wordpress:php8.4-fpm-alpine
     container_name: wordpress_app
     restart: unless-stopped
-    user: "82:82"
+    user: "www-data:www-data"
     depends_on:
       - mariadb
     environment:
@@ -76,6 +76,7 @@ volumes:
   wordpress_data:
   mariadb_data:
   cache:
+
 
 
 
