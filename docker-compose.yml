@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
 
   # Service 1: Nginx Web Server (Public-Facing Entrypoint)
@@ -31,11 +33,6 @@ services:
     image: wordpress:php8.4-fpm-alpine
     container_name: wordpress_app
     restart: unless-stopped
-    command: >
-      sh -c "
-      chown -R www-data:www-data /var/www/html &&
-      php-fpm
-      "
     depends_on:
       - mariadb
     environment:
@@ -80,3 +77,4 @@ volumes:
   wordpress_data:
   mariadb_data:
   cache:
+
