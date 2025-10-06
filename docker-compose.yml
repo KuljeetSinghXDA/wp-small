@@ -5,7 +5,6 @@ services:
   # Service 1: Nginx Web Server (Public-Facing Entrypoint)
   nginx:
     image: nginx:1.28.0-alpine
-    container_name: wordpress_nginx
     restart: unless-stopped
     depends_on:
       - wordpress
@@ -31,7 +30,6 @@ services:
   # Service 2: WordPress Application Server (PHP-FPM)
   wordpress:
     image: wordpress:php8.4-fpm-alpine
-    container_name: wordpress_app
     restart: unless-stopped
     depends_on:
       - mariadb
@@ -56,7 +54,6 @@ services:
   # Service 3: MariaDB Database Server
   mariadb:
     image: mariadb:11.8.3
-    container_name: wordpress_db
     restart: unless-stopped
     command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     environment:
@@ -81,5 +78,6 @@ volumes:
   wordpress_data:
   mariadb_data:
   cache:
+
 
 
