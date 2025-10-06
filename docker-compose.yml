@@ -28,9 +28,6 @@ services:
       WP_AUTO_UPDATE_CORE: "false"
       AUTOMATIC_UPDATER_DISABLED: "true"
       WORDPRESS_DEBUG: ${WORDPRESS_DEBUG:-0}
-      WORDPRESS_CONFIG_EXTRA: |
-        define('WP_MEMORY_LIMIT', '256M');
-        define('DISALLOW_FILE_EDIT', true);
     volumes:
       - wordpress_data:/var/www/html
       - ./uploads.ini:/usr/local/etc/php/conf.d/uploads.ini:ro
@@ -61,4 +58,5 @@ volumes:
   wordpress_data:
   mariadb_data:
   cache:
+
 
