@@ -25,7 +25,7 @@ services:
       - "traefik.http.routers.wordpress-https.entrypoints=websecure"
       - "traefik.http.routers.wordpress-https.tls=true"
       - "traefik.http.routers.wordpress-https.tls.certresolver=letsencrypt"
-      - "traefik.http.services.wordpress.loadbalancer.server.port=80"
+      - "traefik.http.services.wordpress-nginx.loadbalancer.server.port=80"
       - "traefik.docker.network=dokploy-network"
 
   # Service 2: WordPress Application Server (PHP-FPM)
@@ -50,6 +50,8 @@ services:
       - ./www.conf:/usr/local/etc/php-fpm.d/www.conf:ro
     networks:
       - dokploy-network
+    labels:
+      - "traefik.enable=false"
 
   # Service 3: MariaDB Database Server
   mariadb:
@@ -67,6 +69,8 @@ services:
       - ./low-memory.cnf:/etc/mysql/conf.d/low-memory.cnf:ro
     networks:
       - dokploy-network
+    labels:
+      - "traefik.enable=false"
 
 # Top-Level Definitions
 networks:
@@ -77,4 +81,3 @@ volumes:
   wordpress_data:
   mariadb_data:
   cache:
-
